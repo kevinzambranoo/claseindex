@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Predicción de Diabetes</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #74ABE2, #5563DE);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      margin: 0;
+      color: #333;
+    }
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 15px;
+      width: 100%;
+      max-width: 600px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #5563DE;
+    }
+    form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+    }
+    label {
+      font-weight: bold;
+      display: block;
+      margin-bottom: 5px;
+    }
+    input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .full-width {
+      grid-column: span 2;
+    }
+    button {
+      grid-column: span 2;
+      padding: 12px;
+      background-color: #5563DE;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #3949ab;
+    }
+    .result {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Predicción de Diabetes</h1>
+    <form id="predictForm">
+      <div class="full-width">
+        <label for="first_name">Nombre</label>
+        <input type="text" id="first_name" name="first_name" required>
+      </div>
+      <div class="full-width">
+        <label for="last_name">Apellido</label>
+        <input type="text" id="last_name" name="last_name" required>
+      </div>
+      <div class="full-width">
+        <label for="identification_number">Número de Identificación</label>
+        <input type="text" id="identification_number" name="identification_number" required>
+      </div>
+      
+      <div>
+        <label for="pregnancies">Embarazos</label>
+        <input type="number" id="pregnancies" name="pregnancies" required>
+      </div>
+      <div>
+        <label for="glucose">Glucosa</label>
+        <input type="number" id="glucose" name="glucose" required>
+      </div>
+      <div>
+        <label for="bloodpressure">Presión Arterial</label>
+        <input type="number" id="bloodpressure" name="bloodpressure" required>
+      </div>
+      <div>
+        <label for="skinthickness">Grosor de Piel</label>
+        <input type="number" id="skinthickness" name="skinthickness" required>
+      </div>
+      <div>
+        <label for="insulin">Insulina</label>
+        <input type="number" id="insulin" name="insulin" required>
+      </div>
+      <div>
+        <label for="bmi">IMC</label>
+        <input type="number" step="0.1" id="bmi" name="bmi" required>
+      </div>
+      <div>
+        <label for="diabetespedigreefunction">Función de Pedigrí</label>
+        <input type="number" step="0.001" id="diabetespedigreefunction" name="diabetespedigreefunction" required>
+      </div>
+      <div>
+        <label for="age">Edad</label>
+        <input type="number" id="age" name="age" required>
+      </div>
+      
+      <button type="submit">Prediccion</button>
+    </form>
+    <div class="result" id="result"></div>
+  </div>
+
+  <script>
+    document.getElementById('predictForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+
+      // Construir objeto con los valores del formulario
+      const data = {
+        first_name: document.getElementById('first_name').value,
+        last_name: document.getElementById('last_name').value,
+        identification_number: document.getElementById('identification_number').value,
+        pregnancies: parseInt(document.getElementById('pregnancies').value),
+        glucose: parseInt(document.getElementById('glucose').value),
+        bloodpressure: parseInt(document.getElementById('bloodpressure').value),
+        skinthickness: parseInt(document.getElementById('skinthickness').value),
+        insulin: parseInt(document.getElementById('insulin').value),
+        bmi: parseFloat(document.getElementById('bmi').value),
+        diabetespedigreefunction: parseFloat(document.getElementById('diabetespedigreefunction').value),
+        age: parseInt(document.getElementById('age').value),
+      };
+
+      try {
+        const response = await fetch('https://clase2-b7me.onrender.com/predict', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        if (!response.ok) {
+          throw new Error('Error en la predicción');
+        }
+
+        const result = await response.json();
+        document.getElementById('result').innerText = `Predicción: ${result.prediction}`;
+      } catch (error) {
+        document.getElementById('result').innerText = 'Error al obtener predicción';
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
